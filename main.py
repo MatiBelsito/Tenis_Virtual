@@ -21,13 +21,15 @@ NEGRO = (0, 0, 0)
 BLANCO = (255, 255, 255)
 
 # Paletas
-paleta_izquierda = pygame.Rect(30, 250, 20, 100)
+paleta_izquierda = pygame.Rect(30, 250, 20, 100) #  (x,y,width,heigth) pos_x, pos_y, ancho, alto
 paleta_derecha = pygame.Rect (750, 250, 20, 100)
 
 # Pelota
-pelota = pygame.Rect (390, 290, 20, 20)
-posicion_pelota_x = 5 * random.choice([1, -1])
+
+pelota = pygame.Rect (390, 290, 20, 20) #(x,y,width,heigth)  pos_x, pos_y, ancho, alto
+posicion_pelota_x = 5 * random.choice([1, -1]) # 5 (pixeles por fotograma) * dirección aleatoria
 posicion_pelota_y = 5 * random.choice([1, -1])
+incremento = 0
 
 
 # Velocidades de las paletas
@@ -86,6 +88,7 @@ while True:
                 pelota.y = ALTO // 2 - pelota.height // 2
                 posicion_pelota_x = 5 * random.choice([1, -1])
                 posicion_pelota_y = 5 * random.choice([1, -1])
+                incremento = 0
 
         # Detener el movimiento de las paletas
         if evento.type == pygame.KEYUP:
@@ -99,11 +102,11 @@ while True:
     
     # Actualizar el juego
     if not jugador1_gana and not jugador2_gana:
-        # Mover las palas
+        # Mover las paletas
         paleta_izquierda.y += posicion_paleta_izquierda
         paleta_derecha.y += posicion_paleta_derecha
 
-        # Evitar que las palas se salgan de la pantalla
+        # Evitar que las paletas se salgan de la pantalla
         if paleta_izquierda.top < 0:
             paleta_izquierda.top = 0
         if paleta_izquierda.bottom > ALTO:
@@ -119,25 +122,27 @@ while True:
 
         # Rebote de la pelota en las paredes superior e inferior
         if pelota.top <= 0 or pelota.bottom >= ALTO:
-            posicion_pelota_y = -posicion_pelota_y
+            posicion_pelota_y = -posicion_pelota_y # cambio de dirección
 
         # Colisiones con las palas
         if pelota.colliderect(paleta_izquierda) or pelota.colliderect(paleta_derecha):
-            posicion_pelota_x = -posicion_pelota_x
+            posicion_pelota_x = -posicion_pelota_x # cambio de dirección
 
         # Si la pelota cruza el límite izquierdo o derecho
         if pelota.left <= 0:
+            incremento += 0.25
             puntos_jugador2 += 1
             pelota.x = ANCHO // 2 - pelota.width // 2
             pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x = 5 * random.choice([1, -1])
-            posicion_pelota_y = 5 * random.choice([1, -1])
+            posicion_pelota_x =(incremento + 5)  * random.choice([1, -1]) # Salida aleatoria con incremento de velocidad
+            posicion_pelota_y = (incremento + 5) * random.choice([1, -1])
         if pelota.right >= ANCHO:
+            incremento += 0.25
             puntos_jugador1 += 1
             pelota.x = ANCHO // 2 - pelota.width // 2
             pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x = 5 * random.choice([1, -1])
-            posicion_pelota_y = 5 * random.choice([1, -1])
+            posicion_pelota_x = (incremento + 5) * random.choice([1, -1])
+            posicion_pelota_y = (incremento + 5) * random.choice([1, -1])
 
         # Verificar si algún jugador gana
         if puntos_jugador1 == 10:
@@ -168,7 +173,7 @@ while True:
     # Actualizar la pantalla ######################################################## 
     
     pygame.display.update()
-    pygame.time.Clock().tick(60)  # FPS
+    pygame.time.Clock().tick(60)  # FPS # moderar la cantidad de ciclos por segundo del bucle principal
     
     
             
