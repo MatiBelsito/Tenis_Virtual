@@ -2,6 +2,7 @@ import pygame
 import random
 
 pygame.init()
+# pygame.mixer.init()
 
 
 # Ventana principal
@@ -41,7 +42,8 @@ puntos_jugador2 = 0
 
 # Banderas
 jugador1_gana = False
-jugador2_gana = False 
+jugador2_gana = False
+musica_ganador_reproducida = False
 
 # Función para mostrar el puntaje
 def mostrar_puntajes():
@@ -54,10 +56,18 @@ def mostrar_mensaje(mensaje):
     pantalla.blit(texto, (ANCHO // 2 - texto.get_width() // 2, ALTO // 2))
 
 
+# Reproducir la música de fondo
+pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_fondo.mp3")  
+pygame.mixer.music.play(-1, 0.0)
+
+
 ################################# Bucle principal ##################################
+
+    
 while True:
     
     pantalla.fill (NEGRO) # fondo negro
+    
     
     # Gestionar Eventos ############################################################
     for evento in pygame.event.get():
@@ -87,7 +97,10 @@ while True:
                 pelota.y = ALTO // 2 - pelota.height // 2
                 posicion_pelota_x = 5 * random.choice([1, -1])
                 posicion_pelota_y = 5 * random.choice([1, -1])
-                incremento = 0
+                musica_ganador_reproducida = False
+                pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_fondo.mp3")
+                pygame.mixer.music.play(-1, 0.0)
+                
 
         # Detener el movimiento de las paletas
         if evento.type == pygame.KEYUP:
@@ -153,12 +166,24 @@ while True:
     mostrar_puntajes()
 
     # Mostrar el mensaje de victoria
+    
     if jugador1_gana:
         mostrar_mensaje("¡Jugador 1 Gana!")
-        pelota = pygame.Rect (1000, 1000, 20, 20) # escondo la pelota
+        pelota = pygame.Rect(1000, 1000, 20, 20)  # Escondo la pelota
+        if not musica_ganador_reproducida:
+            pygame.mixer.music.stop()  # Detener la música de fondo
+            pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_ganador.mp3")  # Cargo música de victoria
+            pygame.mixer.music.play(0, 0.0)  # Reproducir música de victoria
+            musica_ganador_reproducida = True  # Marco que la música de victoria ha comenzado
+
     elif jugador2_gana:
         mostrar_mensaje("¡Jugador 2 Gana!")
-        pelota = pygame.Rect (1000, 1000, 20, 20) # escondo la pelota
+        pelota = pygame.Rect(1000, 1000, 20, 20)  # Escondo la pelota
+        if not musica_ganador_reproducida:
+            pygame.mixer.music.stop()  # Detener la música de fondo
+            pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_ganador.mp3")  # Cargo música de victoria
+            pygame.mixer.music.play(0, 0.0)  # Reproducir música de victoria
+            musica_ganador_reproducida = True  # Marco que la música de victoria ha comenzado
     
     
     # Dibujar en pantalla ##########################################################
