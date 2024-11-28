@@ -27,9 +27,8 @@ paleta_derecha = pygame.Rect (750, 250, 20, 100)
 # Pelota
 
 pelota = pygame.Rect (390, 290, 20, 20) #(x,y,width,heigth)  pos_x, pos_y, ancho, alto
-posicion_pelota_x = 5 * random.choice([1, -1]) # 5 (pixeles por fotograma) * dirección aleatoria
-posicion_pelota_y = 5 * random.choice([1, -1])
-incremento = 0
+posicion_pelota_x = 5 
+posicion_pelota_y = 5
 
 
 # Velocidades de las paletas
@@ -124,25 +123,25 @@ while True:
         if pelota.top <= 0 or pelota.bottom >= ALTO:
             posicion_pelota_y = -posicion_pelota_y # cambio de dirección
 
-        # Colisiones con las palas
+        # Colisiones con las paletas e incremento de velocidad
         if pelota.colliderect(paleta_izquierda) or pelota.colliderect(paleta_derecha):
-            posicion_pelota_x = -posicion_pelota_x # cambio de dirección
+            posicion_pelota_x = -posicion_pelota_x * 1.075 # cambio de dirección e incremento
+            posicion_pelota_y = posicion_pelota_y * 1.075 # solo incremento
+               
 
         # Si la pelota cruza el límite izquierdo o derecho
         if pelota.left <= 0:
-            incremento += 0.25
             puntos_jugador2 += 1
             pelota.x = ANCHO // 2 - pelota.width // 2
             pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x =(incremento + 5)  * random.choice([1, -1]) # Salida aleatoria con incremento de velocidad
-            posicion_pelota_y = (incremento + 5) * random.choice([1, -1])
+            posicion_pelota_x =  +5 * random.choice([1, -1]) # Salida aleatoria con incremento de velocidad
+            posicion_pelota_y = +5 * random.choice([1, -1])
         if pelota.right >= ANCHO:
-            incremento += 0.25
             puntos_jugador1 += 1
             pelota.x = ANCHO // 2 - pelota.width // 2
             pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x = (incremento + 5) * random.choice([1, -1])
-            posicion_pelota_y = (incremento + 5) * random.choice([1, -1])
+            posicion_pelota_x = +5 * random.choice([1, -1])
+            posicion_pelota_y = +5 * random.choice([1, -1])
 
         # Verificar si algún jugador gana
         if puntos_jugador1 == 10:
@@ -156,9 +155,10 @@ while True:
     # Mostrar el mensaje de victoria
     if jugador1_gana:
         mostrar_mensaje("¡Jugador 1 Gana!")
+        pelota = pygame.Rect (1000, 1000, 20, 20) # escondo la pelota
     elif jugador2_gana:
         mostrar_mensaje("¡Jugador 2 Gana!")
-    
+        pelota = pygame.Rect (1000, 1000, 20, 20) # escondo la pelota
     
     
     # Dibujar en pantalla ##########################################################
