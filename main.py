@@ -1,207 +1,51 @@
 import pygame
-import random
+from funciones import jugar
 
-pygame.init()
-# pygame.mixer.init()
+# Función para mostrar el menú
+def mostrar_menu():
+    print("-" * 13)
+    print("TENIS VIRTUAL")
+    print("-" * 13)
+    print("Menu Principal")
+    print("1. Jugar")
+    print("2. Instrucciones")
+    print("3. Salir")
+    print("-" * 30)
 
+# Función para mostrar las instrucciones
+def mostrar_instrucciones():
+    print("Jugador 1: utiliza las teclas W y S para mover tu paleta")
+    print("Jugador 2: utiliza las teclas ARRIBA y ABAJO para mover tu paleta")
+    print("Pulsando la tecla R pueden reiniciar el juego")
+    print("Para volver al Menu Principal escribe 'v'")
+    print("-" * 30)
 
-# Ventana principal
+    while True:
+        volver = input("Escribe 'v' para volver al menú principal: ").lower()
+        if volver == "v":
+            break  #  vuelvo al menú
 
-# Dimensiones de la ventana
-ANCHO = 800
-ALTO = 600
-
-pantalla = pygame.display.set_mode((ANCHO,ALTO)) 
-titulo = pygame.display.set_caption ( "Tenis Virtual")
-
-# Fuente para puntaje
-fuente = pygame.font.SysFont("Arial",30)
-
-# Colores
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
-
-# Paletas
-paleta_izquierda = pygame.Rect(30, 250, 20, 100) #  (x,y,width,heigth) pos_x, pos_y, ancho, alto
-paleta_derecha = pygame.Rect (750, 250, 20, 100)
-
-# Pelota
-
-pelota = pygame.Rect (390, 290, 20, 20) #(x,y,width,heigth)  pos_x, pos_y, ancho, alto
-posicion_pelota_x = 5 
-posicion_pelota_y = 5
-
-
-# Velocidades de las paletas
-posicion_paleta_izquierda = 0
-posicion_paleta_derecha = 0
-
-# Puntajes
-puntos_jugador1 = 0
-puntos_jugador2 = 0
-
-# Banderas
-jugador1_gana = False
-jugador2_gana = False
-musica_ganador_reproducida = False
-
-# Función para mostrar el puntaje
-def mostrar_puntajes():
-    texto = fuente.render(f"Jugador 1: {puntos_jugador1}  Jugador 2: {puntos_jugador2}", True, BLANCO)
-    pantalla.blit(texto, (ANCHO // 2 - texto.get_width() // 2, 20))
-
-# Función para mostrar el mensaje de victoria
-def mostrar_mensaje(mensaje):
-    texto = fuente.render(mensaje, True, BLANCO)
-    pantalla.blit(texto, (ANCHO // 2 - texto.get_width() // 2, ALTO // 2))
-
-
-# Reproducir la música de fondo
-pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_fondo.mp3")  
-pygame.mixer.music.play(-1, 0.0)
-
-
-################################# Bucle principal ##################################
-
+def main():
     
-while True:
-    
-    pantalla.fill (NEGRO) # fondo negro
-    
-    
-    # Gestionar Eventos ############################################################
-    for evento in pygame.event.get():
-        
-        if evento.type == pygame.QUIT: # (cerrar ventana)
-            pygame.quit()
-            quit()
-        
-        # Control de movimiento de las paletas
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_w:
-                posicion_paleta_izquierda = -5  # Subir
-            if evento.key == pygame.K_s:
-                posicion_paleta_izquierda = 5   # Bajar
-            if evento.key == pygame.K_UP:
-                posicion_paleta_derecha = -5  # Subir
-            if evento.key == pygame.K_DOWN:
-                posicion_paleta_derecha = 5   # Bajar
+
+    while True:
+        mostrar_menu()  # Muestro el menú
+        try:
+            opcion = int(input("Selecciona una opción: "))  # Solicito la opción del usuario
             
-            # Reiniciar el juego si un jugador ha ganado
-            if evento.key == pygame.K_r and (jugador1_gana or jugador2_gana):
-                puntos_jugador1 = 0
-                puntos_jugador2 = 0
-                jugador1_gana = False
-                jugador2_gana = False
-                pelota.x = ANCHO // 2 - pelota.width // 2
-                pelota.y = ALTO // 2 - pelota.height // 2
-                posicion_pelota_x = 5 * random.choice([1, -1])
-                posicion_pelota_y = 5 * random.choice([1, -1])
-                musica_ganador_reproducida = False
-                pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_fondo.mp3")
-                pygame.mixer.music.play(-1, 0.0)
-                
-
-        # Detener el movimiento de las paletas
-        if evento.type == pygame.KEYUP:
-            if evento.key == pygame.K_w or evento.key == pygame.K_s:
-                posicion_paleta_izquierda = 0
-            if evento.key == pygame.K_UP or evento.key == pygame.K_DOWN:
-                posicion_paleta_derecha = 0
+            if opcion == 1:
+                jugar()  # función para comenzar a jugar
+            elif opcion == 2:
+                mostrar_instrucciones()  # función para mostrar las instrucciones
+            elif opcion == 3:
+                print("¡Gracias por jugar! ¡Hasta luego!")  # Mensaje de despedida
+                pygame.quit()  # cierro pygame
+                exit()  # Sale del programa
+            else:
+                print("Opción no válida. Por favor, selecciona una opción entre 1 y 3.")
             
-            
-    # Actualizar el juego ##########################################################
-    
-    # Actualizar el juego
-    if not jugador1_gana and not jugador2_gana:
-        # Mover las paletas
-        paleta_izquierda.y += posicion_paleta_izquierda
-        paleta_derecha.y += posicion_paleta_derecha
+        except ValueError:
+            print("Entrada no válida. Por favor, ingresa un número entero.")  # error no numerico
 
-        # Evitar que las paletas se salgan de la pantalla
-        if paleta_izquierda.top < 0:
-            paleta_izquierda.top = 0
-        if paleta_izquierda.bottom > ALTO:
-            paleta_izquierda.bottom = ALTO
-        if paleta_derecha.top < 0:
-            paleta_derecha.top = 0
-        if paleta_derecha.bottom > ALTO:
-            paleta_derecha.bottom = ALTO
 
-        # Mover la pelota
-        pelota.x += posicion_pelota_x
-        pelota.y += posicion_pelota_y
-
-        # Rebote de la pelota en las paredes superior e inferior
-        if pelota.top <= 0 or pelota.bottom >= ALTO:
-            posicion_pelota_y = -posicion_pelota_y # cambio de dirección
-
-        # Colisiones con las paletas e incremento de velocidad
-        if pelota.colliderect(paleta_izquierda) or pelota.colliderect(paleta_derecha):
-            posicion_pelota_x = -posicion_pelota_x * 1.075 # cambio de dirección e incremento
-            posicion_pelota_y = posicion_pelota_y * 1.075 # solo incremento
-               
-
-        # Si la pelota cruza el límite izquierdo o derecho
-        if pelota.left <= 0:
-            puntos_jugador2 += 1
-            pelota.x = ANCHO // 2 - pelota.width // 2
-            pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x =  +5 * random.choice([1, -1]) # Salida aleatoria con incremento de velocidad
-            posicion_pelota_y = +5 * random.choice([1, -1])
-        if pelota.right >= ANCHO:
-            puntos_jugador1 += 1
-            pelota.x = ANCHO // 2 - pelota.width // 2
-            pelota.y = ALTO // 2 - pelota.height // 2
-            posicion_pelota_x = +5 * random.choice([1, -1])
-            posicion_pelota_y = +5 * random.choice([1, -1])
-
-        # Verificar si algún jugador gana
-        if puntos_jugador1 == 10:
-            jugador1_gana = True
-        if puntos_jugador2 == 10:
-            jugador2_gana = True
-
-    # Mostrar el puntaje
-    mostrar_puntajes()
-
-    # Mostrar el mensaje de victoria
-    
-    if jugador1_gana:
-        mostrar_mensaje("¡Jugador 1 Gana!")
-        pelota = pygame.Rect(1000, 1000, 20, 20)  # Escondo la pelota
-        if not musica_ganador_reproducida:
-            pygame.mixer.music.stop()  # Detener la música de fondo
-            pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_ganador.mp3")  # Cargo música de victoria
-            pygame.mixer.music.play(0, 0.0)  # Reproducir música de victoria
-            musica_ganador_reproducida = True  # Marco que la música de victoria ha comenzado
-
-    elif jugador2_gana:
-        mostrar_mensaje("¡Jugador 2 Gana!")
-        pelota = pygame.Rect(1000, 1000, 20, 20)  # Escondo la pelota
-        if not musica_ganador_reproducida:
-            pygame.mixer.music.stop()  # Detener la música de fondo
-            pygame.mixer.music.load("C:/Users/Matias/Documents/Programacion_1/Tenis/musica_ganador.mp3")  # Cargo música de victoria
-            pygame.mixer.music.play(0, 0.0)  # Reproducir música de victoria
-            musica_ganador_reproducida = True  # Marco que la música de victoria ha comenzado
-    
-    
-    # Dibujar en pantalla ##########################################################
-    
-    # pantalla.fill((0,0,0)) # (relleno de pantalla color negro)
-    pygame.draw.rect(pantalla, BLANCO, paleta_izquierda)
-    pygame.draw.rect(pantalla, BLANCO, paleta_derecha)
-    pygame.draw.ellipse(pantalla, BLANCO, pelota)
-    
-    
-    
-    # Actualizar la pantalla ######################################################## 
-    
-    pygame.display.update()
-    pygame.time.Clock().tick(60)  # FPS # moderar la cantidad de ciclos por segundo del bucle principal
-    
-    
-            
-    
-    
-
+main()  # Llamo a la función principal para ejecutar el menú
